@@ -191,8 +191,8 @@
               let alertBlock = '<div class="alert alert-' + alertColor + ' alert-dismissible"><i class="fa fa-exclamation-circle"></i>' + alertMessage + '<button type="button" class="close" data-dismiss="alert">&times;</button>' + listErrors + '</div>';
               $('#content > .container-fluid').prepend(alertBlock);
             },
-            error: function(jqXHR) {
-              alert('Error: ' + jqXHR.responseText);
+            error: function(xhr, ajaxOptions, thrownError) {
+              alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
             }
           });
         })

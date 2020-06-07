@@ -12,7 +12,7 @@
   <operation>
     <search trim="true"><![CDATA[public function edit() {]]></search>
     <add position="before" trim="true"><![CDATA[
-  // ajax save method
+  // ocn__catalog_ajax_buttons
   public function addAjax() {
       $this->load->language('catalog/category');
 
@@ -29,13 +29,13 @@
       $this->response->addHeader('Content-Type: application/json; charset=utf-8');
       $this->response->setOutput(json_encode($data));
   }
-  // ajax save method
+  // ocn__catalog_ajax_buttons
     ]]></add>
   </operation>
   <operation>
     <search trim="true"><![CDATA[public function delete() {]]></search>
     <add position="before" trim="true"><![CDATA[
-  // save ajax method
+  // ocn__catalog_ajax_buttons
   public function editAjax() {
       $this->load->language('catalog/category');
 
@@ -43,32 +43,32 @@
 
       if ($this->validateForm()) {
           $this->model_catalog_category->editCategory($this->request->get['category_id'], $this->request->post);
-          $response['success'] = $this->language->get('text_success');
+          $data['success'] = $this->language->get('text_success');
       } else {
-          $response['error'] = $this->error;
+          $data['error'] = $this->error;
       }
       $this->response->addHeader('Content-Type: application/json; charset=utf-8');
-      $this->response->setOutput(json_encode($response));
+      $this->response->setOutput(json_encode($data));
   }
-  // save ajax method
+  // ocn__catalog_ajax_buttons
     ]]></add>
   </operation>
   <operation>
     <search trim="true"><![CDATA[$data['action'] = $this->url->link('catalog/category/add', 'user_token=' . $this->session->data['user_token'] . $url, true);]]></search>
     <add position="after" trim="true"><![CDATA[
-          // ajax save links
+          // ocn__catalog_ajax_buttons
           $data['action_ajax_add'] = $this->url->link('catalog/category/addAjax', 'user_token=' . $this->session->data['user_token'] . $url, true);
           $data['action_ajax_edit'] = $this->url->link('catalog/category/editAjax', 'user_token=' . $this->session->data['user_token'] . '&category_id=' . $url, true);
-          // ajax save links
+          // ocn__catalog_ajax_buttons
     ]]></add>
   </operation>
   <operation>
     <search trim="true"><![CDATA[$data['action'] = $this->url->link('catalog/category/edit', 'user_token=' . $this->session->data['user_token'] . '&category_id=' . $this->request->get['category_id'] . $url, true);]]></search>
     <add position="after" trim="true"><![CDATA[
-          // ajax save edit link
+          // ocn__catalog_ajax_buttons
     $data['action_ajax_edit'] = $this->url->link('catalog/category/editAjax', 'user_token=' . $this->session->data['user_token'] . '&category_id=' . $this->request->get['category_id'] . $url, true);
           $data['category_id'] = $this->request->get['category_id'];
-          // ajax save edit link
+          // ocn__catalog_ajax_buttons
     ]]></add>
   </operation>
 </file>
@@ -94,15 +94,15 @@
   <operation>
     <search trim="true"><![CDATA[<button type="submit" form="form-category" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>]]></search>
     <add position="before" trim="true"><![CDATA[
-      {# save ajax button #}
+      {# ocn__catalog_ajax_buttons #}
       <button data-toggle="tooltip" title="{{ button_save_ajax }}" class="btn btn-success" id="saveAjax" data-add="{{ action_ajax_add }}" data-edit="{{ action_ajax_edit }}" data-id="{{ category_id }}"><i class="fa fa-save"></i></button>
-      {# save ajax button #}
+      {# ocn__catalog_ajax_buttons #}
     ]]></add>
   </operation>
   <operation>
     <search trim="true"><![CDATA[{{ footer }}]]></search>
     <add position="before" trim="true"><![CDATA[
-      {# save ajax script #}
+      {# ocn__catalog_ajax_buttons #}
       <script>
         $('#saveAjax').on('click', function () {
           $('.alert').remove();
@@ -135,7 +135,6 @@
               buttonSaveAjax.find('i.fa').removeClass('fa-spinner fa-pulse').addClass('fa-save');
             },
             success: function(response) {
-              console.log(response)
               let listErrors = '';
               let alertMessage = response.success;
               let alertColor = 'success';
@@ -198,7 +197,7 @@
           });
         })
       </script>
-      {# save ajax script #}
+      {# ocn__catalog_ajax_buttons #}
     ]]></add>
   </operation>
 </file>

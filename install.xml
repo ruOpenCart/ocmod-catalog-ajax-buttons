@@ -2,73 +2,73 @@
 <modification>
   <name>[OCN] Catalog Ajax Buttons</name>
   <code>ocn__catalog_ajax_buttons</code>
-  <version>3.0.1.0</version>
+  <version>3.0.2.0</version>
   <author>Hkr</author>
   <link>https://forum.opencart.name/resources/20/</link>
-  <date>03.06.2020</date>
+  <date>08.06.2020</date>
 
+<!-- Category Buttons start -->
 <!-- Controller begin -->
 <file path="admin/controller/catalog/category.php">
   <operation>
     <search trim="true"><![CDATA[public function edit() {]]></search>
     <add position="before" trim="true"><![CDATA[
-  // ocn__catalog_ajax_buttons
-  public function addAjax() {
-      $this->load->language('catalog/category');
+    // ocn__catalog_ajax_buttons
+    public function addAjax() {
+        $this->load->language('catalog/category');
+        $this->load->model('catalog/category');
 
-      $this->load->model('catalog/category');
+        if ($this->validateForm()) {
+            $data['category_id'] = $this->model_catalog_category->addCategory($this->request->post);
+            $data['success'] = $this->language->get('text_success');
+            $data['text_form'] = $this->language->get('text_edit');
+        } else {
+            $data['error'] = $this->error;
+        }
 
-      if ($this->validateForm()) {
-          $url = '';
-          $data['category_id'] = $this->model_catalog_category->addCategory($this->request->post);
-          $data['success'] = $this->language->get('text_success');
-          $data['text_form'] = $this->language->get('text_edit');
-      } else {
-          $data['error'] = $this->error;
-      }
-      $this->response->addHeader('Content-Type: application/json; charset=utf-8');
-      $this->response->setOutput(json_encode($data));
-  }
-  // ocn__catalog_ajax_buttons
+        $this->response->addHeader('Content-Type: application/json; charset=utf-8');
+        $this->response->setOutput(json_encode($data));
+    }
+    // ocn__catalog_ajax_buttons
     ]]></add>
   </operation>
   <operation>
     <search trim="true"><![CDATA[public function delete() {]]></search>
     <add position="before" trim="true"><![CDATA[
-  // ocn__catalog_ajax_buttons
-  public function editAjax() {
-      $this->load->language('catalog/category');
+    // ocn__catalog_ajax_buttons
+    public function editAjax() {
+        $this->load->language('catalog/category');
+        $this->load->model('catalog/category');
 
-      $this->load->model('catalog/category');
+        if ($this->validateForm()) {
+            $this->model_catalog_category->editCategory($this->request->get['category_id'], $this->request->post);
+            $data['success'] = $this->language->get('text_success');
+        } else {
+            $data['error'] = $this->error;
+        }
 
-      if ($this->validateForm()) {
-          $this->model_catalog_category->editCategory($this->request->get['category_id'], $this->request->post);
-          $data['success'] = $this->language->get('text_success');
-      } else {
-          $data['error'] = $this->error;
-      }
-      $this->response->addHeader('Content-Type: application/json; charset=utf-8');
-      $this->response->setOutput(json_encode($data));
-  }
-  // ocn__catalog_ajax_buttons
+        $this->response->addHeader('Content-Type: application/json; charset=utf-8');
+        $this->response->setOutput(json_encode($data));
+    }
+    // ocn__catalog_ajax_buttons
     ]]></add>
   </operation>
   <operation>
     <search trim="true"><![CDATA[$data['action'] = $this->url->link('catalog/category/add', 'user_token=' . $this->session->data['user_token'] . $url, true);]]></search>
     <add position="after" trim="true"><![CDATA[
-          // ocn__catalog_ajax_buttons
-          $data['action_ajax_add'] = $this->url->link('catalog/category/addAjax', 'user_token=' . $this->session->data['user_token'] . $url, true);
-          $data['action_ajax_edit'] = $this->url->link('catalog/category/editAjax', 'user_token=' . $this->session->data['user_token'] . '&category_id=' . $url, true);
-          // ocn__catalog_ajax_buttons
+    // ocn__catalog_ajax_buttons
+    $data['action_ajax_add'] = $this->url->link('catalog/category/addAjax', 'user_token=' . $this->session->data['user_token'] . $url, true);
+    $data['action_ajax_edit'] = $this->url->link('catalog/category/editAjax', 'user_token=' . $this->session->data['user_token'] . '&category_id=' . $url, true);
+    // ocn__catalog_ajax_buttons
     ]]></add>
   </operation>
   <operation>
     <search trim="true"><![CDATA[$data['action'] = $this->url->link('catalog/category/edit', 'user_token=' . $this->session->data['user_token'] . '&category_id=' . $this->request->get['category_id'] . $url, true);]]></search>
     <add position="after" trim="true"><![CDATA[
-          // ocn__catalog_ajax_buttons
-    $data['action_ajax_edit'] = $this->url->link('catalog/category/editAjax', 'user_token=' . $this->session->data['user_token'] . '&category_id=' . $this->request->get['category_id'] . $url, true);
-          $data['category_id'] = $this->request->get['category_id'];
-          // ocn__catalog_ajax_buttons
+      // ocn__catalog_ajax_buttons
+      $data['action_ajax_edit'] = $this->url->link('catalog/category/editAjax', 'user_token=' . $this->session->data['user_token'] . '&category_id=' . $this->request->get['category_id'] . $url, true);
+      $data['category_id'] = $this->request->get['category_id'];
+      // ocn__catalog_ajax_buttons
     ]]></add>
   </operation>
 </file>
@@ -94,112 +94,294 @@
   <operation>
     <search trim="true"><![CDATA[<button type="submit" form="form-category" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>]]></search>
     <add position="before" trim="true"><![CDATA[
-      {# ocn__catalog_ajax_buttons #}
-      <button data-toggle="tooltip" title="{{ button_save_ajax }}" class="btn btn-success" id="saveAjax" data-add="{{ action_ajax_add }}" data-edit="{{ action_ajax_edit }}" data-id="{{ category_id }}"><i class="fa fa-save"></i></button>
-      {# ocn__catalog_ajax_buttons #}
+    {# ocn__catalog_ajax_buttons #}
+    <button data-toggle="tooltip" title="{{ button_save_ajax }}" class="btn btn-success" id="saveAjax" data-add="{{ action_ajax_add }}" data-edit="{{ action_ajax_edit }}" data-id="{{ category_id }}"><i class="fa fa-save"></i></button>
+    {# ocn__catalog_ajax_buttons #}
     ]]></add>
   </operation>
   <operation>
     <search trim="true"><![CDATA[{{ footer }}]]></search>
     <add position="before" trim="true"><![CDATA[
-      {# ocn__catalog_ajax_buttons #}
-      <script>
-        $('#saveAjax').on('click', function () {
-          $('.alert').remove();
-          $('.has-error').removeClass('has-error');
-          $('.text-danger').remove();
-      
-          let buttonSaveAjax = $('#saveAjax');
-          let buttonSave = $('button[type=submit]');
-          let buttonReturn = $('a.btn.btn-default');
-          let categoryId = buttonSaveAjax.attr('data-id');
-          
-          const urlAjaxAdd = buttonSaveAjax.attr('data-add');
-          const urlAjaxEdit = buttonSaveAjax.attr('data-edit');
-      
-          $.ajax({
-            type: 'post',
-            data: $('form').serialize(),
-            url: categoryId ? urlAjaxEdit : urlAjaxAdd,
-            dataType: 'json',
-            beforeSend: function() {
-              buttonSaveAjax.prop('disabled', true);
-              buttonSave.prop('disabled', true);
-              buttonReturn.attr('disabled', true);
-              buttonSaveAjax.find('i.fa').removeClass('fa-save').addClass('fa-spinner fa-pulse');
-            },
-            complete: function() {
-              buttonSaveAjax.prop('disabled', false);
-              buttonSave.prop('disabled', false);
-              buttonReturn.attr('disabled', false);
-              buttonSaveAjax.find('i.fa').removeClass('fa-spinner fa-pulse').addClass('fa-save');
-            },
-            success: function(response) {
-              let listErrors = '';
-              let alertMessage = response.success;
-              let alertColor = 'success';
-              if (response.error) {
-                listErrors += '<ul>'
-      
-                if (response.error.name) {
-                  for (let key in response.error.name) {
-                    $('label[for=input-name' + key + ']').parent().addClass('has-error');
-                    let alertErrorInput = '<div class="text-danger">' + response.error.name[key] + '</div>';
-                    $('#input-name' + key).parent().append(alertErrorInput);
-                  }
-                  listErrors += '<li>' + response.error.name[1] + '</li>';
+    {# ocn__catalog_ajax_buttons #}
+    <script>
+      $('#saveAjax').on('click', function () {
+        $('.alert').remove();
+        $('.has-error').removeClass('has-error');
+        $('.text-danger').remove();
+    
+        let buttonSaveAjax = $('#saveAjax');
+        let buttonSave = $('button[type=submit]');
+        let buttonReturn = $('a.btn.btn-default');
+        let id = buttonSaveAjax.attr('data-id');
+        
+        const urlAjaxAdd = buttonSaveAjax.attr('data-add');
+        const urlAjaxEdit = buttonSaveAjax.attr('data-edit');
+    
+        $.ajax({
+          type: 'post',
+          data: $('form').serialize(),
+          url: id ? urlAjaxEdit : urlAjaxAdd,
+          dataType: 'json',
+          beforeSend: function() {
+            buttonSaveAjax.prop('disabled', true);
+            buttonSave.prop('disabled', true);
+            buttonReturn.attr('disabled', true);
+            buttonSaveAjax.find('i.fa').removeClass('fa-save').addClass('fa-spinner fa-pulse');
+          },
+          complete: function() {
+            buttonSaveAjax.prop('disabled', false);
+            buttonSave.prop('disabled', false);
+            buttonReturn.attr('disabled', false);
+            buttonSaveAjax.find('i.fa').removeClass('fa-spinner fa-pulse').addClass('fa-save');
+          },
+          success: function(response) {
+            let listErrors = '';
+            let alertMessage = response.success;
+            let alertColor = 'success';
+            if (response.error) {
+              listErrors += '<ul>'
+    
+              if (response.error.name) {
+                for (let key in response.error.name) {
+                  $('label[for=input-name' + key + ']').parent().addClass('has-error');
+                  let alertErrorInput = '<div class="text-danger">' + response.error.name[key] + '</div>';
+                  $('#input-name' + key).parent().append(alertErrorInput);
                 }
-      
-                if (response.error.meta_title) {
-                  for (let key in response.error.meta_title) {
-                    $('label[for=input-meta-title' + key + ']').parent().addClass('has-error');
-                    let alertErrorInput = '<div class="text-danger">' + response.error.meta_title[key] + '</div>';
-                    $('#input-meta-title' + key).parent().append(alertErrorInput);
-                  }
-                  listErrors += '<li>' + response.error.meta_title[1] + '</li>';
-                }
-      
-                if (response.error.keyword) {
-                  for (let first in response.error.keyword) {
-                    for (let second in response.error.keyword[first]) {
-                      let alertErrorInput = '<div class="text-danger">' + response.error.keyword[first][second] + '</div>';
-                      $('input[name="category_seo_url[' + first + '][' + second + ']"]').parent().addClass('has-error').after(alertErrorInput);
-                    }
-                  }
-                  listErrors += '<li>' + response.error.keyword[0][1] + '</li>';
-                }
-      
-                if (response.error.parent) {
-                  $('label[for=input-parent]').parent().addClass('has-error');
-                  let alertErrorInput = '<div class="text-danger">' + response.error.parent + '</div>';
-                  $('#input-parent').parent().append(alertErrorInput);
-                  listErrors += '<li>' + response.error.parent + '</li>';
-                }
-      
-                listErrors += '</ul>';
-      
-                alertMessage = response.error.warning;
-                alertColor = 'danger';
-              } else if (!categoryId) {
-                $('h3.panel-title').html('<i class="fa fa-pencil"></i>' + response.text_form);
-                buttonSaveAjax.attr('data-id', response.category_id);
-                buttonSaveAjax.attr('data-edit', urlAjaxEdit + response.category_id);
-                const newUrl = window.location.href.replace('/add', '/edit') + '&category_id=' + response.category_id;
-                window.history.pushState(null, null, newUrl);
-                $('form').attr('action', newUrl);
+                listErrors += '<li>' + response.error.name[1] + '</li>';
               }
-              let alertBlock = '<div class="alert alert-' + alertColor + ' alert-dismissible"><i class="fa fa-exclamation-circle"></i>' + alertMessage + '<button type="button" class="close" data-dismiss="alert">&times;</button>' + listErrors + '</div>';
-              $('#content > .container-fluid').prepend(alertBlock);
-            },
-            error: function(xhr, ajaxOptions, thrownError) {
-              alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+    
+              if (response.error.meta_title) {
+                for (let key in response.error.meta_title) {
+                  $('label[for=input-meta-title' + key + ']').parent().addClass('has-error');
+                  let alertErrorInput = '<div class="text-danger">' + response.error.meta_title[key] + '</div>';
+                  $('#input-meta-title' + key).parent().append(alertErrorInput);
+                }
+                listErrors += '<li>' + response.error.meta_title[1] + '</li>';
+              }
+    
+              if (response.error.keyword) {
+                for (let first in response.error.keyword) {
+                  for (let second in response.error.keyword[first]) {
+                    let alertErrorInput = '<div class="text-danger">' + response.error.keyword[first][second] + '</div>';
+                    $('input[name="category_seo_url[' + first + '][' + second + ']"]').parent().addClass('has-error').after(alertErrorInput);
+                  }
+                }
+                listErrors += '<li>' + response.error.keyword[0][1] + '</li>';
+              }
+    
+              if (response.error.parent) {
+                $('label[for=input-parent]').parent().addClass('has-error');
+                let alertErrorInput = '<div class="text-danger">' + response.error.parent + '</div>';
+                $('#input-parent').parent().append(alertErrorInput);
+                listErrors += '<li>' + response.error.parent + '</li>';
+              }
+    
+              listErrors += '</ul>';
+    
+              alertMessage = response.error.warning;
+              alertColor = 'danger';
+            } else if (!id) {
+              $('h3.panel-title').html('<i class="fa fa-pencil"></i>' + response.text_form);
+              buttonSaveAjax.attr('data-id', response.category_id);
+              buttonSaveAjax.attr('data-edit', urlAjaxEdit + response.category_id);
+              const newUrl = window.location.href.replace('/add', '/edit') + '&category_id=' + response.category_id;
+              window.history.pushState(null, null, newUrl);
+              $('form').attr('action', newUrl);
             }
-          });
-        })
-      </script>
-      {# ocn__catalog_ajax_buttons #}
+            let alertBlock = '<div class="alert alert-' + alertColor + ' alert-dismissible"><i class="fa fa-exclamation-circle"></i>' + alertMessage + '<button type="button" class="close" data-dismiss="alert">&times;</button>' + listErrors + '</div>';
+            $('#content > .container-fluid').prepend(alertBlock);
+          },
+          error: function(xhr, ajaxOptions, thrownError) {
+            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+          }
+        });
+      })
+    </script>
+    {# ocn__catalog_ajax_buttons #}
     ]]></add>
   </operation>
 </file>
 <!-- Twig end -->
+<!-- Category Buttons end -->
+
+<!-- Product Buttons start -->
+<!-- Controller begin -->
+<file path="admin/controller/catalog/product.php">
+  <operation>
+    <search trim="true"><![CDATA[public function edit() {]]></search>
+    <add position="before" trim="true"><![CDATA[
+    // ocn__catalog_ajax_buttons
+    public function addAjax() {
+        $this->load->language('catalog/product');
+        $this->load->model('catalog/product');
+        
+        if ($this->validateForm()) {
+            $data['product_id'] = $this->model_catalog_product->addProduct($this->request->post);
+            $data['success'] = $this->language->get('text_success');
+            $data['text_form'] = $this->language->get('text_edit');
+        } else {
+            $data['error'] = $this->error;
+        }
+        
+        $this->response->addHeader('Content-Type: application/json; charset=utf-8');
+        $this->response->setOutput(json_encode($data));
+    }
+    // ocn__catalog_ajax_buttons
+    ]]></add>
+  </operation>
+  <operation>
+    <search trim="true"><![CDATA[public function delete() {]]></search>
+    <add position="before" trim="true"><![CDATA[
+    // ocn__catalog_ajax_buttons
+    public function editAjax() {
+        $this->load->language('catalog/product');
+        $this->load->model('catalog/product');
+        
+        if ($this->validateForm()) {
+            $this->model_catalog_product->editProduct($this->request->get['product_id'], $this->request->post);
+            $data['success'] = $this->language->get('text_success');
+        } else {
+            $data['error'] = $this->error;
+        }
+        
+        $this->response->addHeader('Content-Type: application/json; charset=utf-8');
+        $this->response->setOutput(json_encode($data));
+    }
+    // ocn__catalog_ajax_buttons
+    ]]></add>
+  </operation>
+  <operation>
+    <search trim="true"><![CDATA[$data['action'] = $this->url->link('catalog/product/add', 'user_token=' . $this->session->data['user_token'] . $url, true);]]></search>
+    <add position="after" trim="true"><![CDATA[
+    // ocn__catalog_ajax_buttons
+    $data['action_ajax_add'] = $this->url->link('catalog/product/addAjax', 'user_token=' . $this->session->data['user_token'] . $url, true);
+    $data['action_ajax_edit'] = $this->url->link('catalog/product/editAjax', 'user_token=' . $this->session->data['user_token'] . '&product_id=' . $url, true);
+    // ocn__catalog_ajax_buttons
+    ]]></add>
+  </operation>
+  <operation>
+    <search trim="true"><![CDATA[$data['action'] = $this->url->link('catalog/product/edit', 'user_token=' . $this->session->data['user_token'] . '&product_id=' . $this->request->get['product_id'] . $url, true);]]></search>
+    <add position="after" trim="true"><![CDATA[
+    // ocn__catalog_ajax_buttons
+    $data['action_ajax_edit'] = $this->url->link('catalog/product/editAjax', 'user_token=' . $this->session->data['user_token'] . '&product_id=' . $this->request->get['product_id'] . $url, true);
+    $data['product_id'] = $this->request->get['product_id'];
+    // ocn__catalog_ajax_buttons
+    ]]></add>
+  </operation>
+</file>
+<!-- Controller end -->
+
+<!-- Twig begin -->
+<file path="admin/view/template/catalog/product_form.twig">
+  <operation>
+    <search trim="true"><![CDATA[<button type="submit" form="form-product" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>]]></search>
+    <add position="before" trim="true"><![CDATA[
+    {# ocn__catalog_ajax_buttons #}
+    <button data-toggle="tooltip" title="{{ button_save_ajax }}" class="btn btn-success" id="saveAjax" data-add="{{ action_ajax_add }}" data-edit="{{ action_ajax_edit }}" data-id="{{ product_id }}"><i class="fa fa-save"></i></button>
+    {# ocn__catalog_ajax_buttons #}
+    ]]></add>
+  </operation>
+  <operation>
+    <search trim="true"><![CDATA[{{ footer }}]]></search>
+    <add position="before" trim="true"><![CDATA[
+    {# ocn__catalog_ajax_buttons #}
+    <script>
+      $('#saveAjax').on('click', function () {
+        $('.alert').remove();
+        $('.has-error').removeClass('has-error');
+        $('.text-danger').remove();
+
+        let buttonSaveAjax = $('#saveAjax');
+        let buttonSave = $('button[type=submit]');
+        let buttonReturn = $('a.btn.btn-default');
+        let id = buttonSaveAjax.attr('data-id');
+        const urlAjaxAdd = buttonSaveAjax.attr('data-add');
+        const urlAjaxEdit = buttonSaveAjax.attr('data-edit');
+
+        $.ajax({
+          type: 'post',
+          data: $('form').serialize(),
+          url: id ? urlAjaxEdit : urlAjaxAdd,
+          dataType: 'json',
+          beforeSend: function() {
+            buttonSaveAjax.prop('disabled', true);
+            buttonSave.prop('disabled', true);
+            buttonReturn.attr('disabled', true);
+            buttonSaveAjax.find('i.fa').removeClass('fa-save').addClass('fa-spinner fa-pulse');
+          },
+          complete: function() {
+            buttonSaveAjax.prop('disabled', false);
+            buttonSave.prop('disabled', false);
+            buttonReturn.attr('disabled', false);
+            buttonSaveAjax.find('i.fa').removeClass('fa-spinner fa-pulse').addClass('fa-save');
+          },
+          success: function(response) {
+            let listErrors = '';
+            let alertMessage = response.success;
+            let alertColor = 'success';
+            if (response.error) {
+              listErrors += '<ul>'
+
+              if (response.error.name) {
+                for (let key in response.error.name) {
+                  $('label[for=input-name' + key + ']').parent().addClass('has-error');
+                  let alertErrorInput = '<div class="text-danger">' + response.error.name[key] + '</div>';
+                  $('#input-name' + key).parent().append(alertErrorInput);
+                }
+                listErrors += '<li>' + response.error.name[1] + '</li>';
+              }
+
+              if (response.error.meta_title) {
+                for (let key in response.error.meta_title) {
+                  $('label[for=input-meta-title' + key + ']').parent().addClass('has-error');
+                  let alertErrorInput = '<div class="text-danger">' + response.error.meta_title[key] + '</div>';
+                  $('#input-meta-title' + key).parent().append(alertErrorInput);
+                }
+                listErrors += '<li>' + response.error.meta_title[1] + '</li>';
+              }
+
+              if (response.error.keyword) {
+                for (let first in response.error.keyword) {
+                  for (let second in response.error.keyword[first]) {
+                    let alertErrorInput = '<div class="text-danger">' + response.error.keyword[first][second] + '</div>';
+                    $('input[name="product_seo_url[' + first + '][' + second + ']"]').parent().addClass('has-error').after(alertErrorInput);
+                  }
+                }
+                listErrors += '<li>' + response.error.keyword[0][1] + '</li>';
+              }
+
+              if (response.error.model) {
+                $('label[for=input-model]').parent().addClass('has-error');
+                let alertErrorInput = '<div class="text-danger">' + response.error.model + '</div>';
+                $('#input-model').parent().append(alertErrorInput);
+                listErrors += '<li>' + response.error.model + '</li>';
+              }
+
+              listErrors += '</ul>';
+
+              alertMessage = response.error.warning;
+              alertColor = 'danger';
+            } else if (!id) {
+              $('h3.panel-title').html('<i class="fa fa-pencil"></i>' + response.text_form);
+              buttonSaveAjax.attr('data-id', response.product_id);
+              buttonSaveAjax.attr('data-edit', urlAjaxEdit + response.product_id);
+              const newUrl = window.location.href.replace('/add', '/edit') + '&product_id=' + response.product_id;
+              window.history.pushState(null, null, newUrl);
+              $('form').attr('action', newUrl);
+            }
+            let alertBlock = '<div class="alert alert-' + alertColor + ' alert-dismissible"><i class="fa fa-exclamation-circle"></i>' + alertMessage + '<button type="button" class="close" data-dismiss="alert">&times;</button>' + listErrors + '</div>';
+            $('#content > .container-fluid').prepend(alertBlock);
+          },
+          error: function(xhr, ajaxOptions, thrownError) {
+            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+          }
+        });
+      })
+    </script>
+    {# ocn__catalog_ajax_buttons #}
+    ]]></add>
+  </operation>
+</file>
+<!-- Twig end -->
+<!-- Product Buttons end -->
 </modification>

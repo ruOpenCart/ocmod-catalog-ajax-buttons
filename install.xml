@@ -2,7 +2,7 @@
 <modification>
   <name>[OCN] Catalog Ajax Buttons</name>
   <code>ocn__catalog_ajax_buttons</code>
-  <version>3.0.4.0</version>
+  <version>3.0.4.1</version>
   <author>Hkr</author>
   <link>https://forum.opencart.name/resources/20/</link>
   <date>20.06.2020</date>
@@ -596,7 +596,7 @@
     ]]></add>
   </operation>
   <operation>
-    <search trim="true"><![CDATA[$data['action'] = $this->url->link('catalog/manufacturer/add', 'user_token=' . $this->session->data['user_token'] . $url, true);]]></search>
+    <search trim="true"><![CDATA[$data['action'] = $this->url->link('catalog/information/add', 'user_token=' . $this->session->data['user_token'] . $url, true);]]></search>
     <add position="after" trim="true"><![CDATA[
 			// ocn__catalog_ajax_buttons
 			$data['action_ajax_add'] = $this->url->link('catalog/information/addAjax', 'user_token=' . $this->session->data['user_token'] . $url, true);
@@ -605,7 +605,7 @@
     ]]></add>
   </operation>
   <operation>
-    <search trim="true"><![CDATA[$data['action'] = $this->url->link('catalog/manufacturer/edit', 'user_token=' . $this->session->data['user_token'] . '&manufacturer_id=' . $this->request->get['manufacturer_id'] . $url, true);]]></search>
+    <search trim="true"><![CDATA[$data['action'] = $this->url->link('catalog/information/edit', 'user_token=' . $this->session->data['user_token'] . '&information_id=' . $this->request->get['information_id'] . $url, true);]]></search>
     <add position="after" trim="true"><![CDATA[
 			// ocn__catalog_ajax_buttons
 			$data['action_ajax_edit'] = $this->url->link('catalog/information/editAjax', 'user_token=' . $this->session->data['user_token'] . '&information_id=' . $this->request->get['information_id'] . $url, true);
@@ -619,7 +619,7 @@
 <!-- Twig begin -->
 <file path="admin/view/template/catalog/information_form.twig">
   <operation>
-    <search trim="true"><![CDATA[<button type="submit" form="form-manufacturer" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>]]></search>
+    <search trim="true"><![CDATA[<button type="submit" form="form-information" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>]]></search>
     <add position="before" trim="true"><![CDATA[
         {# ocn__catalog_ajax_buttons #}
         <button data-toggle="tooltip" title="{{ button_save_ajax }}" class="btn btn-success" id="saveAjax" data-add="{{ action_ajax_add }}" data-edit="{{ action_ajax_edit }}" data-id="{{ information_id }}"><i class="fa fa-save"></i></button>

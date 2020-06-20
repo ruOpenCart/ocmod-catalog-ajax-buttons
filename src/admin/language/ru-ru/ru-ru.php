@@ -31,6 +31,7 @@ $_['text_home']                     = 'Общие';
 $_['button_add']                    = 'Создать';
 $_['button_delete']                 = 'Удалить';
 $_['button_save']                   = 'Сохранить';
+$_['button_save_ajax']              = 'Применить';
 $_['button_cancel']                 = 'Отменить';
 $_['button_cancel_recurring']       = 'Отменить регулярные платежи';
 $_['button_continue']               = 'Продолжить';

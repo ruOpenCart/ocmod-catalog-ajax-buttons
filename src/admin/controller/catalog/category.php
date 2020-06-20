@@ -44,6 +44,24 @@ class ControllerCatalogCategory extends Controller {
 		$this->getForm();
 	}
 
+	// ocn__catalog_ajax_buttons
+	public function addAjax() {
+		$this->load->language('catalog/category');
+		$this->load->model('catalog/category');
+
+		if ($this->validateForm()) {
+			$data['category_id'] = $this->model_catalog_category->addCategory($this->request->post);
+			$data['success'] = $this->language->get('text_success');
+			$data['text_form'] = $this->language->get('text_edit');
+		} else {
+			$data['error'] = $this->error;
+		}
+
+		$this->response->addHeader('Content-Type: application/json; charset=utf-8');
+		$this->response->setOutput(json_encode($data));
+	}
+	// ocn__catalog_ajax_buttons
+	
 	public function edit() {
 		$this->load->language('catalog/category');
 
@@ -75,6 +93,23 @@ class ControllerCatalogCategory extends Controller {
 
 		$this->getForm();
 	}
+
+	// ocn__catalog_ajax_buttons
+	public function editAjax() {
+		$this->load->language('catalog/category');
+		$this->load->model('catalog/category');
+
+		if ($this->validateForm()) {
+			$this->model_catalog_category->editCategory($this->request->get['category_id'], $this->request->post);
+			$data['success'] = $this->language->get('text_success');
+		} else {
+			$data['error'] = $this->error;
+		}
+
+		$this->response->addHeader('Content-Type: application/json; charset=utf-8');
+		$this->response->setOutput(json_encode($data));
+	}
+	// ocn__catalog_ajax_buttons
 
 	public function delete() {
 		$this->load->language('catalog/category');
@@ -340,8 +375,16 @@ class ControllerCatalogCategory extends Controller {
 
 		if (!isset($this->request->get['category_id'])) {
 			$data['action'] = $this->url->link('catalog/category/add', 'user_token=' . $this->session->data['user_token'] . $url, true);
+			// ocn__catalog_ajax_buttons
+			$data['action_ajax_add'] = $this->url->link('catalog/category/addAjax', 'user_token=' . $this->session->data['user_token'] . $url, true);
+			$data['action_ajax_edit'] = $this->url->link('catalog/category/editAjax', 'user_token=' . $this->session->data['user_token'] . '&category_id=' . $url, true);
+			// ocn__catalog_ajax_buttons
 		} else {
 			$data['action'] = $this->url->link('catalog/category/edit', 'user_token=' . $this->session->data['user_token'] . '&category_id=' . $this->request->get['category_id'] . $url, true);
+			// ocn__catalog_ajax_buttons
+			$data['action_ajax_edit'] = $this->url->link('catalog/category/editAjax', 'user_token=' . $this->session->data['user_token'] . '&category_id=' . $this->request->get['category_id'] . $url, true);
+			$data['category_id'] = $this->request->get['category_id'];
+			// ocn__catalog_ajax_buttons
 		}
 
 		$data['cancel'] = $this->url->link('catalog/category', 'user_token=' . $this->session->data['user_token'] . $url, true);

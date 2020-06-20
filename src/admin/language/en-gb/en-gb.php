@@ -31,6 +31,7 @@ $_['text_home']                     = 'Home';
 $_['button_add']                    = 'Add New';
 $_['button_delete']                 = 'Delete';
 $_['button_save']                   = 'Save';
+$_['button_save_ajax']              = 'Apply';
 $_['button_cancel']                 = 'Cancel';
 $_['button_cancel_recurring']       = 'Cancel Recurring Payments';
 $_['button_continue']               = 'Continue';

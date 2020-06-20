@@ -44,6 +44,25 @@ class ControllerCatalogManufacturer extends Controller {
 		$this->getForm();
 	}
 
+	// ocn__catalog_ajax_buttons
+	public function addAjax() {
+		$this->load->language('catalog/manufacturer');
+		$this->load->model('catalog/manufacturer');
+		
+		if ($this->validateForm()) {
+			$data['manufacturer_id'] = $this->model_catalog_manufacturer->addManufacturer($this->request->post);
+			
+			$data['success'] = $this->language->get('text_success');
+			$data['text_form'] = $this->language->get('text_edit');
+		} else {
+			$data['error'] = $this->error;
+		}
+		
+		$this->response->addHeader('Content-Type: application/json; charset=utf-8');
+		$this->response->setOutput(json_encode($data));
+	}
+	// ocn__catalog_ajax_buttons
+
 	public function edit() {
 		$this->load->language('catalog/manufacturer');
 
@@ -75,6 +94,23 @@ class ControllerCatalogManufacturer extends Controller {
 
 		$this->getForm();
 	}
+
+	// ocn__catalog_ajax_buttons
+	public function editAjax() {
+		$this->load->language('catalog/manufacturer');
+		$this->load->model('catalog/manufacturer');
+		
+		if ($this->validateForm()) {
+			$this->model_catalog_manufacturer->editManufacturer($this->request->get['manufacturer_id'], $this->request->post);
+			$data['success'] = $this->language->get('text_success');
+		} else {
+			$data['error'] = $this->error;
+		}
+		
+		$this->response->addHeader('Content-Type: application/json; charset=utf-8');
+		$this->response->setOutput(json_encode($data));
+	}
+	// ocn__catalog_ajax_buttons
 
 	public function delete() {
 		$this->load->language('catalog/manufacturer');
@@ -294,8 +330,16 @@ class ControllerCatalogManufacturer extends Controller {
 
 		if (!isset($this->request->get['manufacturer_id'])) {
 			$data['action'] = $this->url->link('catalog/manufacturer/add', 'user_token=' . $this->session->data['user_token'] . $url, true);
+			// ocn__catalog_ajax_buttons
+			$data['action_ajax_add'] = $this->url->link('catalog/manufacturer/addAjax', 'user_token=' . $this->session->data['user_token'] . $url, true);
+			$data['action_ajax_edit'] = $this->url->link('catalog/manufacturer/editAjax', 'user_token=' . $this->session->data['user_token'] . '&manufacturer_id=' . $url, true);
+			// ocn__catalog_ajax_buttons
 		} else {
 			$data['action'] = $this->url->link('catalog/manufacturer/edit', 'user_token=' . $this->session->data['user_token'] . '&manufacturer_id=' . $this->request->get['manufacturer_id'] . $url, true);
+			// ocn__catalog_ajax_buttons
+			$data['action_ajax_edit'] = $this->url->link('catalog/manufacturer/editAjax', 'user_token=' . $this->session->data['user_token'] . '&manufacturer_id=' . $this->request->get['manufacturer_id'] . $url, true);
+			$data['manufacturer_id'] = $this->request->get['manufacturer_id'];
+			// ocn__catalog_ajax_buttons
 		}
 
 		$data['cancel'] = $this->url->link('catalog/manufacturer', 'user_token=' . $this->session->data['user_token'] . $url, true);

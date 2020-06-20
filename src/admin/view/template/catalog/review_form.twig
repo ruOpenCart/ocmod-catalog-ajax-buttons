@@ -3,6 +3,9 @@
   <div class="page-header">
     <div class="container-fluid">
       <div class="pull-right">
+        {# ocn__catalog_ajax_buttons #}
+        <button data-toggle="tooltip" title="{{ button_save_ajax }}" class="btn btn-success" id="saveAjax" data-add="{{ action_ajax_add }}" data-edit="{{ action_ajax_edit }}" data-id="{{ review_id }}"><i class="fa fa-save"></i></button>
+        {# ocn__catalog_ajax_buttons #}
         <button type="submit" form="form-review" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
         <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
       <h1>{{ heading_title }}</h1>
@@ -154,4 +157,92 @@ $('input[name=\'product\']').autocomplete({
 	}	
 });
 //--></script></div>
+{# ocn__catalog_ajax_buttons #}
+<script>
+  $('#saveAjax').on('click', function () {
+    $('.alert').remove();
+    $('.has-error').removeClass('has-error');
+    $('.text-danger').remove();
+
+    let buttonSaveAjax = $('#saveAjax');
+    let buttonSave = $('button[type=submit]');
+    let buttonReturn = $('a.btn.btn-default');
+    let id = buttonSaveAjax.attr('data-id');
+    const urlAjaxAdd = buttonSaveAjax.attr('data-add');
+    const urlAjaxEdit = buttonSaveAjax.attr('data-edit');
+
+    $.ajax({
+      type: 'post',
+      data: $('form').serialize(),
+      url: id ? urlAjaxEdit : urlAjaxAdd,
+      dataType: 'json',
+      beforeSend: function() {
+        buttonSaveAjax.prop('disabled', true);
+        buttonSave.prop('disabled', true);
+        buttonReturn.attr('disabled', true);
+        buttonSaveAjax.find('i.fa').removeClass('fa-save').addClass('fa-spinner fa-pulse');
+      },
+      complete: function() {
+        buttonSaveAjax.prop('disabled', false);
+        buttonSave.prop('disabled', false);
+        buttonReturn.attr('disabled', false);
+        buttonSaveAjax.find('i.fa').removeClass('fa-spinner fa-pulse').addClass('fa-save');
+      },
+      success: function(response) {
+        let listErrors = '';
+        let alertMessage = response.success;
+        let alertColor = 'success';
+        if (response.error) {
+          listErrors += '<ul>'
+
+          if (response.error.product) {
+            $('label[for=input-product]').parent().addClass('has-error');
+            let alertErrorInput = '<div class="text-danger">' + response.error.product + '</div>';
+            $('#input-product').parent().append(alertErrorInput);
+            listErrors += '<li>' + response.error.product + '</li>';
+          }
+
+          if (response.error.author) {
+            $('label[for=input-author]').parent().addClass('has-error');
+            let alertErrorInput = '<div class="text-danger">' + response.error.author + '</div>';
+            $('#input-author').parent().append(alertErrorInput);
+            listErrors += '<li>' + response.error.author + '</li>';
+          }
+
+          if (response.error.text) {
+            $('label[for=input-text]').parent().addClass('has-error');
+            let alertErrorInput = '<div class="text-danger">' + response.error.text + '</div>';
+            $('#input-text').parent().append(alertErrorInput);
+            listErrors += '<li>' + response.error.text + '</li>';
+          }
+
+          if (response.error.rating) {
+            $('label[for=input-name]').parent().addClass('has-error');
+            let alertErrorInput = '<div class="text-danger">' + response.error.rating + '</div>';
+            $('input[name=rating]').parent().parent().append(alertErrorInput);
+            listErrors += '<li>' + response.error.rating + '</li>';
+          }
+
+          listErrors += '</ul>';
+
+          alertMessage = response.error.warning;
+          alertColor = 'danger';
+        } else if (!id) {
+          $('h3.panel-title').html('<i class="fa fa-pencil"></i>' + response.text_form);
+          buttonSaveAjax.attr('data-id', response.review_id);
+          buttonSaveAjax.attr('data-edit', urlAjaxEdit + response.review_id);
+          const newUrl = window.location.href.replace('/add', '/edit') + '&review_id=' + response.review_id;
+          window.history.pushState(null, null, newUrl);
+          $('form').attr('action', newUrl);
+        }
+        let alertBlock = '<div class="alert alert-' + alertColor + ' alert-dismissible"><i class="fa fa-exclamation-circle"></i>' + alertMessage + '<button type="button" class="close" data-dismiss="alert">&times;</button>' + listErrors + '</div>';
+        $('#content > .container-fluid').prepend(alertBlock);
+      },
+      error: function(xhr, ajaxOptions, thrownError) {
+        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+      }
+    });
+  })
+</script>
+{# ocn__catalog_ajax_buttons #}
 {{ footer }}

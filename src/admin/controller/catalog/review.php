@@ -60,6 +60,24 @@ class ControllerCatalogReview extends Controller {
 		$this->getForm();
 	}
 
+	// ocn__catalog_ajax_buttons
+	public function addAjax() {
+		$this->load->language('catalog/review');
+		$this->load->model('catalog/review');
+		
+		if ($this->validateForm()) {
+			$data['review_id'] = $this->model_catalog_review->addReview($this->request->post);
+			$data['success'] = $this->language->get('text_success');
+			$data['text_form'] = $this->language->get('text_edit');
+		} else {
+			$data['error'] = $this->error;
+		}
+		
+		$this->response->addHeader('Content-Type: application/json; charset=utf-8');
+		$this->response->setOutput(json_encode($data));
+	}
+	// ocn__catalog_ajax_buttons
+
 	public function edit() {
 		$this->load->language('catalog/review');
 
@@ -107,6 +125,23 @@ class ControllerCatalogReview extends Controller {
 
 		$this->getForm();
 	}
+
+	// ocn__catalog_ajax_buttons
+	public function editAjax() {
+		$this->load->language('catalog/review');
+		$this->load->model('catalog/review');
+		
+		if ($this->validateForm()) {
+			$this->model_catalog_review->editReview($this->request->get['review_id'], $this->request->post);
+			$data['success'] = $this->language->get('text_success');
+		} else {
+			$data['error'] = $this->error;
+		}
+		
+		$this->response->addHeader('Content-Type: application/json; charset=utf-8');
+		$this->response->setOutput(json_encode($data));
+	}
+	// ocn__catalog_ajax_buttons
 
 	public function delete() {
 		$this->load->language('catalog/review');
@@ -459,8 +494,16 @@ class ControllerCatalogReview extends Controller {
 
 		if (!isset($this->request->get['review_id'])) {
 			$data['action'] = $this->url->link('catalog/review/add', 'user_token=' . $this->session->data['user_token'] . $url, true);
+			// ocn__catalog_ajax_buttons
+			$data['action_ajax_add'] = $this->url->link('catalog/review/addAjax', 'user_token=' . $this->session->data['user_token'] . $url, true);
+			$data['action_ajax_edit'] = $this->url->link('catalog/review/editAjax', 'user_token=' . $this->session->data['user_token'] . '&review_id=' . $url, true);
+			// ocn__catalog_ajax_buttons
 		} else {
 			$data['action'] = $this->url->link('catalog/review/edit', 'user_token=' . $this->session->data['user_token'] . '&review_id=' . $this->request->get['review_id'] . $url, true);
+			// ocn__catalog_ajax_buttons
+			$data['action_ajax_edit'] = $this->url->link('catalog/review/editAjax', 'user_token=' . $this->session->data['user_token'] . '&review_id=' . $this->request->get['review_id'] . $url, true);
+			$data['review_id'] = $this->request->get['review_id'];
+			// ocn__catalog_ajax_buttons
 		}
 
 		$data['cancel'] = $this->url->link('catalog/review', 'user_token=' . $this->session->data['user_token'] . $url, true);

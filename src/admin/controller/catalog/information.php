@@ -43,6 +43,24 @@ class ControllerCatalogInformation extends Controller {
 
 		$this->getForm();
 	}
+	
+	// ocn__catalog_ajax_buttons
+	public function addAjax() {
+		$this->load->language('catalog/information');
+		$this->load->model('catalog/information');
+		
+		if ($this->validateForm()) {
+			$data['information_id'] = $this->model_catalog_information->addInformation($this->request->post);
+			$data['success'] = $this->language->get('text_success');
+			$data['text_form'] = $this->language->get('text_edit');
+		} else {
+			$data['error'] = $this->error;
+		}
+		
+		$this->response->addHeader('Content-Type: application/json; charset=utf-8');
+		$this->response->setOutput(json_encode($data));
+	}
+	// ocn__catalog_ajax_buttons
 
 	public function edit() {
 		$this->load->language('catalog/information');
@@ -75,6 +93,23 @@ class ControllerCatalogInformation extends Controller {
 
 		$this->getForm();
 	}
+	
+	// ocn__catalog_ajax_buttons
+	public function editAjax() {
+		$this->load->language('catalog/information');
+		$this->load->model('catalog/information');
+		
+		if ($this->validateForm()) {
+			$this->model_catalog_information->editInformation($this->request->get['information_id'], $this->request->post);
+			$data['success'] = $this->language->get('text_success');
+		} else {
+			$data['error'] = $this->error;
+		}
+		
+		$this->response->addHeader('Content-Type: application/json; charset=utf-8');
+		$this->response->setOutput(json_encode($data));
+	}
+	// ocn__catalog_ajax_buttons
 
 	public function delete() {
 		$this->load->language('catalog/information');
@@ -306,8 +341,16 @@ class ControllerCatalogInformation extends Controller {
 
 		if (!isset($this->request->get['information_id'])) {
 			$data['action'] = $this->url->link('catalog/information/add', 'user_token=' . $this->session->data['user_token'] . $url, true);
+			// ocn__catalog_ajax_buttons
+			$data['action_ajax_add'] = $this->url->link('catalog/information/addAjax', 'user_token=' . $this->session->data['user_token'] . $url, true);
+			$data['action_ajax_edit'] = $this->url->link('catalog/information/editAjax', 'user_token=' . $this->session->data['user_token'] . '&information_id=' . $url, true);
+			// ocn__catalog_ajax_buttons
 		} else {
 			$data['action'] = $this->url->link('catalog/information/edit', 'user_token=' . $this->session->data['user_token'] . '&information_id=' . $this->request->get['information_id'] . $url, true);
+			// ocn__catalog_ajax_buttons
+			$data['action_ajax_edit'] = $this->url->link('catalog/information/editAjax', 'user_token=' . $this->session->data['user_token'] . '&information_id=' . $this->request->get['information_id'] . $url, true);
+			$data['information_id'] = $this->request->get['information_id'];
+			// ocn__catalog_ajax_buttons
 		}
 
 		$data['cancel'] = $this->url->link('catalog/information', 'user_token=' . $this->session->data['user_token'] . $url, true);
@@ -434,7 +477,7 @@ class ControllerCatalogInformation extends Controller {
 					if (!empty($keyword)) {
 						if (count(array_keys($language, $keyword)) > 1) {
 							$this->error['keyword'][$store_id][$language_id] = $this->language->get('error_unique');
-						}						
+						}
 						
 						$seo_urls = $this->model_design_seo_url->getSeoUrlsByKeyword($keyword);
 						
